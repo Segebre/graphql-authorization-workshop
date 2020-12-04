@@ -1,5 +1,5 @@
-import db, { Post, User } from './database';
-import { createUserToken } from './authentication';
+import db, { Post, Role, User } from "./database";
+import { createUserToken } from "./authentication";
 
 type Context = {
   token: string;
@@ -13,12 +13,21 @@ function getUsers(): Array<User> {
   return users;
 }
 
-function getPosts(_: Object, {}: Object, { isAuthenticated }: Context): Array<Post> {
-  const posts = Array.from(db.posts.values());
+function getPosts(
+  _: Object,
+  {}: Object,
+  { isAuthenticated, user }: Context
+): Array<Post> {
+  let posts = Array.from(db.posts.values());
 
-  if(!isAuthenticated){
-    return posts.filter(({published}) => !!published)
+  if (!isAuthenticated) {
+    return posts.filter(({ published }) => !!published);
   }
+
+  posts = posts.map((post) => ({
+    ...post,
+    views: user.role === Role.Admin ? post.views : null,
+  }));
 
   return posts;
 }
