@@ -3,6 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 
 import typeDefs from './schema';
 import resolvers from './resolvers';
+import { isTokenValid } from './authentication';
 
 const server = new ApolloServer({
   typeDefs,
@@ -11,7 +12,8 @@ const server = new ApolloServer({
     const token = req.headers.authorization;
 
     return {
-      token
+      token,
+      isAuthenticated: !!isTokenValid(token || '')
     }
   }
 });

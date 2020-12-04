@@ -1,5 +1,5 @@
 import db, { Post, User } from './database';
-import { createUserToken, isTokenValid } from './authentication';
+import { createUserToken } from './authentication';
 
 type Context = {
   token: string;
@@ -13,10 +13,10 @@ function getUsers(): Array<User> {
   return users;
 }
 
-function getPosts(_: Object, {}: Object, { token }: Context): Array<Post> {
+function getPosts(_: Object, {}: Object, { isAuthenticated }: Context): Array<Post> {
   const posts = Array.from(db.posts.values());
 
-  if(!isTokenValid(token)){
+  if(!isAuthenticated){
     return posts.filter(({published}) => !!published)
   }
 
