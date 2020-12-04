@@ -18,16 +18,11 @@ function getPosts(
   {}: Object,
   { isAuthenticated, user }: Context
 ): Array<Post> {
-  let posts = Array.from(db.posts.values());
+  const posts = Array.from(db.posts.values());
 
   if (!isAuthenticated) {
     return posts.filter(({ published }) => !!published);
   }
-
-  posts = posts.map((post) => ({
-    ...post,
-    views: user.role === Role.Admin ? post.views : null,
-  }));
 
   return posts;
 }
